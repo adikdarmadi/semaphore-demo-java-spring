@@ -10,8 +10,10 @@ blocks:
       jobs:
         - name: Build and Deploy docker container
           commands:
-            - 'openjdk:8-alpine'
-            - ARG ENVIRONMENT
-            - 'ENV ENVIRONMENT ${ENVIRONMENT}'
-            - COPY target/*.jar app.jar
-            - 'ENTRYPOINT ["java","-Dspring.profiles.active=${ENVIRONMENT}", "-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar"]'
+            - mvn -q package -Dmaven.test.skip=true
+            - echo "$DOCKER_PASSWORD" | docker login  --username "$DOCKER_USERNAME" --password-stdin
+            - 'docker pull "$DOCKER_USERNAME"/semaphore-demo-java-spring:latest || true'
+            - 'docker build --cache-from "$DOCKER_USERNAME"/semaphore-demo-java-spring:latest \'
+            - '      --build-arg ENVIRONMENT="${ENVIRONMENT}" \'
+            - '      -t "$DOCKER_USERNAME"/semaphore-demo-java-spring:latest .'
+            - 'docker push "$DOCKER_USERNAME"/semaphore-demo-java-spring:latest'
