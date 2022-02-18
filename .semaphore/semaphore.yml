@@ -28,13 +28,8 @@ blocks:
         - name: Integration tests
           commands:
             - mvn test -Pintegration-testing
-  - name: Performence Tests
-    task:
-      jobs:
-        - name: Benchmark
-          commands:
-            - java -version
-            - java -jar target/spring-pipeline-demo.jar > /dev/null &
-            - sleep 20
-            - 'mvn -q jmeter:jmeter'
-            - 'mvn jmeter:results'
+promotions:
+  - name: Dockerize
+    pipeline_file: pipeline_3.yml
+    auto_promote:
+      when: branch = 'master' AND result = 'passed'

@@ -1,0 +1,17 @@
+version: v1.0
+name: Docker Build
+agent:
+  machine:
+    type: e1-standard-2
+    os_image: ubuntu1804
+blocks:
+  - name: Build
+    task:
+      jobs:
+        - name: Build and Deploy docker container
+          commands:
+            - 'FROM openjdk:8-jdk-alpine'
+            - ARG ENVIRONMENT
+            - 'ENV ENVIRONMENT ${ENVIRONMENT}'
+            - COPY target/*.jar app.jar
+            - 'ENTRYPOINT ["java","-Dspring.profiles.active=${ENVIRONMENT}", "-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar"]'
