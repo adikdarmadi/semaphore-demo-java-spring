@@ -1,12 +1,15 @@
 version: v1.0
-name: Initial Pipeline
+name: Java Spring example CI pipeline on Semaphore
 agent:
   machine:
     type: e1-standard-2
-    os_image: ubuntu2004
+    os_image: ubuntu1804
 blocks:
   - name: Build
     task:
+      env_vars:
+        - name: MAVEN_OPTS
+          value: '-Dmaven.repo.local=.m2'
       jobs:
         - name: Build
           commands:
@@ -16,6 +19,9 @@ blocks:
             - cache store
   - name: Test
     task:
+      env_vars:
+        - name: MAVEN_OPTS
+          value: '-Dmaven.repo.local=.m2'
       prologue:
         commands:
           - checkout
@@ -28,8 +34,15 @@ blocks:
         - name: Integration tests
           commands:
             - mvn test -Pintegration-testing
-  - name: Performence Tests
+  - name: Performance tests
     task:
+      env_vars:
+        - name: MAVEN_OPTS
+          value: '-Dmaven.repo.local=.m2'
+      prologue:
+        commands:
+          - checkout
+          - cache restore
       jobs:
         - name: Benchmark
           commands:
@@ -38,3 +51,8 @@ blocks:
             - sleep 20
             - 'mvn -q jmeter:jmeter'
             - 'mvn jmeter:results'
+promotions:
+  - name: Dockerize
+    pipeline_file: docker-build.yml
+    auto_promote_on:
+      - result: passed
