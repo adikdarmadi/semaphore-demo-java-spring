@@ -21,6 +21,7 @@ import java.util.Date;
 @Entity
 public class User implements UserDetails {
 
+	
     public User() {
     }
 
