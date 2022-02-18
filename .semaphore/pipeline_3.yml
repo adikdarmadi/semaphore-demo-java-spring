@@ -10,7 +10,7 @@ blocks:
       jobs:
         - name: Build and Deploy docker container
           commands:
-            - mvn -q package -Dmaven.test.skip=true
+            - checkout
             - echo "$DOCKER_PASSWORD" | docker login  --username "$DOCKER_USERNAME" --password-stdin
             - 'docker pull "$DOCKER_USERNAME"/semaphore-demo-java-spring:latest || true'
             - 'docker build --cache-from "$DOCKER_USERNAME"/semaphore-demo-java-spring:latest \'
