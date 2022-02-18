@@ -10,7 +10,7 @@ blocks:
       jobs:
         - name: Build and Deploy docker container
           commands:
-            - 'FROM openjdk:8-alpine'
+            - 'openjdk:8-alpine'
             - ARG ENVIRONMENT
             - 'ENV ENVIRONMENT ${ENVIRONMENT}'
             - COPY target/*.jar app.jar
